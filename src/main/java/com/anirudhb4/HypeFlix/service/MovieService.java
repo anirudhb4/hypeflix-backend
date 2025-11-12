@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate; // Import this
 import java.time.format.DateTimeFormatter; // Import this
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MovieService {
@@ -39,7 +40,7 @@ public class MovieService {
      * Fetches upcoming INDIAN movies from TMDb and saves/updates them in our database.
      * This will run automatically "at 2:00 AM every day".
      */
-    @PostConstruct
+//    @PostConstruct
     @Scheduled(cron = "0 0 2 * * ?")
     public void fetchAndSaveUpcomingMovies() {
 
@@ -82,5 +83,13 @@ public class MovieService {
      */
     public List<Movie> getAllMovies() {
         return movieRepository.findAll();
+    }
+
+    /**
+     * Gets a single movie by its ID.
+     */
+    public Optional<Movie> getMovieById(Long id) {
+        // JpaRepository gives us findById for free!
+        return movieRepository.findById(id);
     }
 }
