@@ -1,0 +1,22 @@
+spring:
+  application:
+    name:HypeFlix
+
+  datasource:
+    # This is the JDBC URL format. We're taking the host, port, and DB name from your string.
+    url: jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres
+
+    # This is the special username for your pooler.
+    username: postgres.zngxkizgawlfckxfszzf
+
+    # NEVER hardcode your password. Use an environment variable.
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      # Use 'update' for development (auto-creates/updates tables).
+      # Use 'validate' or 'none' for production.
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
