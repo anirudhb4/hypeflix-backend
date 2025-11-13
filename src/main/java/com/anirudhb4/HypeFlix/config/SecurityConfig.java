@@ -52,6 +52,8 @@ public class SecurityConfig {
                         // Allow GET requests for movies/leaderboard
                         .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/leaderboard/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/movies/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/movies/**").authenticated()
 
                         // All other requests must be authenticated
                         .anyRequest().authenticated()

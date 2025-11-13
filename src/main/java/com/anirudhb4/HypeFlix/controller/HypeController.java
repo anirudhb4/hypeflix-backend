@@ -62,4 +62,26 @@ public class HypeController {
         // 2. Fetch and return the list
         return hypeService.getMoviesHypedByUser(userId);
     }
+
+    /**
+     * DELETE /api/movies/{movieId}/hype
+     * Secured endpoint to "un-hype" a movie.
+     */
+    @DeleteMapping("/{movieId}/hype")
+    public ResponseEntity<?> unHypeMovie(
+            @PathVariable Long movieId,
+            @AuthenticationPrincipal Jwt jwt) {
+
+        UUID userId = UUID.fromString(jwt.getSubject());
+
+        try {
+            hypeService.removeHype(movieId, userId);
+            return ResponseEntity.ok().build(); // 200 OK
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage()); // 400 Bad Request
+        } catch (Exception e) {
+            // Catch other potential errors
+            return ResponseEntity.status(500).body("An internal error occurred.");
+        }
+    }
 }

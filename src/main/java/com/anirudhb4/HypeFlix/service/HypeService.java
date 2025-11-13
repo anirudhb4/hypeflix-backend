@@ -55,6 +55,18 @@ public class HypeService {
         hypePointRepository.save(newHype);
     }
 
+    @Transactional
+    public void removeHype(Long movieId, UUID userId) {
+        // 1. Check if the hype entry exists (optional, but good practice)
+        if (!hypePointRepository.existsByUserIdAndMovieId(userId, movieId)) {
+            // Or just return silently
+            throw new IllegalStateException("User has not hyped this movie");
+        }
+
+        // 2. Delete the entry using our new repository method
+        hypePointRepository.deleteByUserIdAndMovieId(userId, movieId);
+    }
+
     public List<Movie> getMoviesHypedByUser(UUID userId) {
         return hypePointRepository.findMoviesHypedByUser(userId);
     }
