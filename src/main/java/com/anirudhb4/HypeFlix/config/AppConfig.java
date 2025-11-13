@@ -10,6 +10,9 @@ public class AppConfig {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
+        return builder
+                // Add a User-Agent header to every request
+                .defaultHeader("User-Agent", "HypeFlix-App/1.0")
+                .build();
     }
 }

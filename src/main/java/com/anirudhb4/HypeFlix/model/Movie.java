@@ -54,11 +54,6 @@ public class Movie {
     @JsonIgnore // We also don't want all posts downloading automatically
     private Set<DiscussionPost> posts;
 
-    @JsonProperty("hypeCount")
-    public int getHypeCount() {
-        return hypePoints == null ? 0 : hypePoints.size();
-    }
-
     @JsonProperty("rawHypeScore") // Useful if you need to sort by numbers later
     public long getRawHypeScore() {
         int userHypes = (hypePoints == null) ? 0 : hypePoints.size();
