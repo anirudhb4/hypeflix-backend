@@ -28,6 +28,9 @@ public class TmdMovieDto {
     @JsonProperty("popularity")
     private Double popularity;
 
+    @JsonProperty("original_language") // TMDb sends "original_language"
+    private String originalLanguage;
+
     // Getters
     public Long getId() { return id; }
     public String getTitle() { return title; }
@@ -35,4 +38,5 @@ public class TmdMovieDto {
     public LocalDate getReleaseDate() { return releaseDate; }
     public String getPosterPath() { return posterPath; }
     public Double getPopularity() { return popularity; }
+    public String getOriginalLanguage() { return originalLanguage; }
 }

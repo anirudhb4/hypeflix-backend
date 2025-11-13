@@ -35,6 +35,8 @@ public class Movie {
 
     private String posterPath;
 
+    private String originalLanguage;
+
     @UpdateTimestamp
     private Instant lastUpdated; // So we know when to refresh from TMDb
 

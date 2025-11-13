@@ -117,6 +117,7 @@ public class MovieService {
                 movie.setReleaseDate(dto.getReleaseDate());
                 movie.setPosterPath(dto.getPosterPath());
                 movie.setTmdbPopularity(dto.getPopularity());
+                movie.setOriginalLanguage(dto.getOriginalLanguage());
 
                 movieRepository.save(movie);
             }
