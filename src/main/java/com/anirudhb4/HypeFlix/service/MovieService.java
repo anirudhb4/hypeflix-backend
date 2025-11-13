@@ -44,37 +44,45 @@ public class MovieService {
     @Scheduled(cron = "0 0 2 * * ?")
     public void fetchAndSaveUpcomingMovies() {
 
-        // 1. Get today's date in YYYY-MM-DD format
         String today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
+        String languages = "ta|ml|hi|te|kn";
 
-        // 2. Define the languages (TMDb uses ISO 639-1 codes)
-        // The pipe "|" acts as an "OR" operator
-        String languages = "ta|ml|hi|te|kn"; // ta=Tamil, ml=Malayalam, hi=Hindi, te=Telugu, kn=Kannada
+        // Fetch 5 pages (approx 100 movies)
+        int pagesToFetch = 5;
 
-        // 3. Build the new URL using the /discover/movie endpoint
-        String url = tmdbBaseUrl + "/discover/movie?" +
-                "api_key=" + tmdbApiKey +
-                "&region=IN" + // Specify India as the region
-                "&with_original_language=" + languages + // Filter by our languages
-                "&primary_release_date.gte=" + today + // Get movies releasing on or after today
-                "&sort_by=popularity.desc" + // Get the most popular ones first
-                "&language=en-US&page=1";
+        for (int page = 1; page <= pagesToFetch; page++) {
 
-        // 4. Call the API
-        TmdUpcomingResponse response = restTemplate.getForObject(url, TmdUpcomingResponse.class);
+            // 1. Construct URL dynamically with the current 'page' number
+            String url = tmdbBaseUrl + "/discover/movie?" +
+                    "api_key=" + tmdbApiKey +
+                    "&region=IN" +
+                    "&with_original_language=" + languages +
+                    "&primary_release_date.gte=" + today +
+                    "&sort_by=popularity.desc" +
+                    "&language=en-US" +
+                    "&page=" + page; // <--- Use the loop variable here
 
-        if (response != null && response.getResults() != null) {
-            // 5. Loop and save the movies to our database
-            for (TmdMovieDto dto : response.getResults()) {
-                Movie movie = new Movie();
-                movie.setId(dto.getId());
-                movie.setTitle(dto.getTitle());
-                movie.setOverview(dto.getOverview());
-                movie.setReleaseDate(dto.getReleaseDate());
-                movie.setPosterPath(dto.getPosterPath());
-                movie.setTmdbPopularity(dto.getPopularity());
+            try {
+                // 2. Call the API
+                TmdUpcomingResponse response = restTemplate.getForObject(url, TmdUpcomingResponse.class);
 
-                movieRepository.save(movie);
+                if (response != null && response.getResults() != null) {
+                    for (TmdMovieDto dto : response.getResults()) {
+                        Movie movie = new Movie();
+                        movie.setId(dto.getId());
+                        movie.setTitle(dto.getTitle());
+                        movie.setOverview(dto.getOverview());
+                        movie.setReleaseDate(dto.getReleaseDate());
+                        movie.setPosterPath(dto.getPosterPath());
+                        movie.setTmdbPopularity(dto.getPopularity());
+
+                        movieRepository.save(movie);
+                    }
+                    System.out.println("Fetched page " + page + " successfully.");
+                }
+            } catch (Exception e) {
+                System.err.println("Error fetching page " + page + ": " + e.getMessage());
+                // Continue to the next page even if one fails
             }
         }
     }
