@@ -34,6 +34,18 @@ public class MovieService {
         this.restTemplate = restTemplate;
         this.tmdbApiKey = tmdbApiKey;
         this.tmdbBaseUrl = tmdbBaseUrl;
+
+        // --- 1. ADD THIS WARM-UP CALL ---
+        try {
+            System.out.println("Warming up TMDb connection...");
+            String url = tmdbBaseUrl + "/configuration?api_key=" + tmdbApiKey;
+            // We don't care about the response, just make the call to establish SSL
+            restTemplate.getForObject(url, String.class);
+            System.out.println("TMDb connection is warm.");
+        } catch (Exception e) {
+            System.err.println("TMDb connection warm-up failed. This might be okay: " + e.getMessage());
+            // Don't stop the app from starting. The main call will try again.
+        }
     }
 
     /**
@@ -66,26 +78,50 @@ public class MovieService {
                 // 2. Call the API
                 TmdUpcomingResponse response = restTemplate.getForObject(url, TmdUpcomingResponse.class);
 
-                if (response != null && response.getResults() != null) {
-                    for (TmdMovieDto dto : response.getResults()) {
-                        Movie movie = new Movie();
-                        movie.setId(dto.getId());
-                        movie.setTitle(dto.getTitle());
-                        movie.setOverview(dto.getOverview());
-                        movie.setReleaseDate(dto.getReleaseDate());
-                        movie.setPosterPath(dto.getPosterPath());
-                        movie.setTmdbPopularity(dto.getPopularity());
+                saveMoviesFromResponse(response); // Use helper method
+                System.out.println("Fetched page " + page + " successfully.");
 
-                        movieRepository.save(movie);
-                    }
-                    System.out.println("Fetched page " + page + " successfully.");
-                }
             } catch (Exception e) {
+                // --- 2. ADD THIS RETRY LOGIC ---
                 System.err.println("Error fetching page " + page + ": " + e.getMessage());
-                // Continue to the next page even if one fails
+
+                // Simple retry logic specifically for this error
+                if (e.getMessage().contains("Remote host terminated the handshake")) {
+                    try {
+                        System.out.println("Retrying page " + page + " after 1 second...");
+                        Thread.sleep(1000); // Wait 1 second
+
+                        TmdUpcomingResponse response = restTemplate.getForObject(url, TmdUpcomingResponse.class);
+
+                        saveMoviesFromResponse(response); // Use helper
+                        System.out.println("Fetched page " + page + " successfully on retry.");
+
+                    } catch (Exception retryException) {
+                        System.err.println("Failed to fetch page " + page + " on retry: " + retryException.getMessage());
+                    }
+                }
+                // --- END RETRY LOGIC ---
             }
         }
     }
+
+    // --- 3. ADD THIS HELPER METHOD (to avoid code duplication) ---
+    private void saveMoviesFromResponse(TmdUpcomingResponse response) {
+        if (response != null && response.getResults() != null) {
+            for (TmdMovieDto dto : response.getResults()) {
+                Movie movie = new Movie();
+                movie.setId(dto.getId());
+                movie.setTitle(dto.getTitle());
+                movie.setOverview(dto.getOverview());
+                movie.setReleaseDate(dto.getReleaseDate());
+                movie.setPosterPath(dto.getPosterPath());
+                movie.setTmdbPopularity(dto.getPopularity());
+
+                movieRepository.save(movie);
+            }
+        }
+    }
+
 
     /**
      * Gets all movies currently in our database.
