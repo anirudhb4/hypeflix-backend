@@ -1,8 +1,12 @@
 package com.anirudhb4.HypeFlix.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
@@ -33,9 +37,20 @@ public class Movie {
 
     // --- Relationships ---
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "movie")
+    @JsonIgnore // --- CHANGE 2: Break the JSON Loop ---
     private Set<HypePoint> hypePoints;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "movie")
+    @JsonIgnore // We also don't want all posts downloading automatically
     private Set<DiscussionPost> posts;
+
+    @JsonProperty("hypeCount")
+    public int getHypeCount() {
+        return hypePoints == null ? 0 : hypePoints.size();
+    }
 }

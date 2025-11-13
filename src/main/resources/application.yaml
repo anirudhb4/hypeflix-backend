@@ -21,14 +21,11 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          # This tells Spring to trust JWTs from your Supabase project
-          issuer-uri: https://zngxkizgawlfckxfszzf.supabase.co/auth/v1
-
 tmdb:
   api:
     key: ${TMDB_API_KEY} # Reads from an environment variable
     base-url: "https://api.themoviedb.org/3"
+
+hypeflix:
+  security:
+    jwt-secret: ${SUPABASE_JWT_SECRET}
