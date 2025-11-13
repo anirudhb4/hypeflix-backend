@@ -60,7 +60,7 @@ public class MovieService {
         String today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
         String languages = "ta|ml|hi|te|kn";
 
-        // Fetch 5 pages (approx 100 movies)
+        // Fetch 20 pages (approx 400 movies)
         int pagesToFetch = 20;
 
         for (int page = 1; page <= pagesToFetch; page++) {
