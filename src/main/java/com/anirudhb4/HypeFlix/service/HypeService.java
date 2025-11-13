@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -52,5 +53,9 @@ public class HypeService {
 
         // 4. Save to the database
         hypePointRepository.save(newHype);
+    }
+
+    public List<Movie> getMoviesHypedByUser(UUID userId) {
+        return hypePointRepository.findMoviesHypedByUser(userId);
     }
 }

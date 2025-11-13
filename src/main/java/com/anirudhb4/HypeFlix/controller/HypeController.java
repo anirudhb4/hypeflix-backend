@@ -1,15 +1,14 @@
 package com.anirudhb4.HypeFlix.controller;
 
+import com.anirudhb4.HypeFlix.model.Movie;
 import com.anirudhb4.HypeFlix.service.HypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -49,5 +48,18 @@ public class HypeController {
             // Catch other potential errors (e.g., movie not found)
             return ResponseEntity.status(500).body("An internal error occurred.");
         }
+    }
+
+    /**
+     * GET /api/movies/hyped
+     * Returns a list of ALL movies the currently logged-in user has hyped.
+     */
+    @GetMapping("/hyped")
+    public List<Movie> getUserHypedMovies(@AuthenticationPrincipal Jwt jwt) {
+        // 1. Get the User ID from the token
+        UUID userId = UUID.fromString(jwt.getSubject());
+
+        // 2. Fetch and return the list
+        return hypeService.getMoviesHypedByUser(userId);
     }
 }
