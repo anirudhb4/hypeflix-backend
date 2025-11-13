@@ -12,6 +12,12 @@ spring:
     # NEVER hardcode your password. Use an environment variable.
     password: ${DB_PASSWORD}
 
+    hikari:
+      maximum-pool-size: 3  # Default is 10. Reduce to 5 (or 3 if errors persist).
+      minimum-idle: 1       # Only keep 1 connection open when idle.
+      idle-timeout: 30000   # Kill idle connections after 30 seconds.
+      max-lifetime: 600000  # Restart connections every 10 minutes.
+
   jpa:
     hibernate:
       # Use 'update' for development (auto-creates/updates tables).
