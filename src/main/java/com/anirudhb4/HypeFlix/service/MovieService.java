@@ -53,7 +53,7 @@ public class MovieService {
      * Fetches upcoming INDIAN movies from TMDb and saves/updates them in our database.
      * This will run automatically "at 2:00 AM every day".
      */
-    @PostConstruct
+//    @PostConstruct
     @Scheduled(cron = "0 0 2 * * ?")
     public void fetchAndSaveUpcomingMovies() {
 
