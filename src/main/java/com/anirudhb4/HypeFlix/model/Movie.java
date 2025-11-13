@@ -62,7 +62,7 @@ public class Movie {
         // THE FORMULA:
         // 1 User Click = 1000 Points (Make user actions feel HUGE)
         // 1 TMDb Point = 500 Points (Internet presence is the baseline)
-        return (long) ((userHypes * 1000) + (internetHype * 500));
+        return (long) ((userHypes * 10000) + (internetHype * 50000));
     }
 
     @JsonProperty("hypeCount") // This replaces your old integer hypeCount
