@@ -54,7 +54,8 @@ public class MovieService {
      * This will run automatically "at 2:00 AM every day".
      */
 //    @PostConstruct
-    @Scheduled(cron = "0 0 2 * * ?")
+    // Runs at 2:00 AM on the 1st day of every month
+    @Scheduled(cron = "0 0 2 1 * ?")
     public void fetchAndSaveUpcomingMovies() {
 
         String today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
