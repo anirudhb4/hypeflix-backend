@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
@@ -42,6 +43,9 @@ public class Movie {
 
     private Double tmdbPopularity; // Stores the "Internet Presence" score
 
+    @Formula("(select count(*) from hype_points hp where hp.movie_id = id)")
+    private int hypePointCount;
+
     // --- Relationships ---
 
     @ToString.Exclude
@@ -58,7 +62,7 @@ public class Movie {
 
     @JsonProperty("rawHypeScore") // Useful if you need to sort by numbers later
     public long getRawHypeScore() {
-        int userHypes = (hypePoints == null) ? 0 : hypePoints.size();
+        int userHypes = this.hypePointCount;
         double internetHype = (tmdbPopularity == null) ? 0.0 : tmdbPopularity;
 
         // THE FORMULA:
