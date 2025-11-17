@@ -126,10 +126,17 @@ public class MovieService {
 
 
     /**
-     * Gets all movies currently in our database.
+     * Gets all UPCOMING movies from our database.
      */
     public List<Movie> getAllMovies() {
-        return movieRepository.findAll(Sort.by(Sort.Direction.ASC, "releaseDate"));
+        // Get today's date
+        LocalDate today = LocalDate.now();
+
+        // Call the new repository method to find movies on or after today
+        return movieRepository.findByReleaseDateGreaterThanEqual(
+                today,
+                Sort.by(Sort.Direction.ASC, "releaseDate")
+        );
     }
 
     /**
